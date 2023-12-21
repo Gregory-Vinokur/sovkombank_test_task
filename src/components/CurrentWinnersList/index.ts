@@ -1,0 +1,1 @@
+export { CurrentWinnersList } from './CurrentWinnersList';

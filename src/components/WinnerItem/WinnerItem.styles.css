@@ -1,0 +1,13 @@
+.winner_item {
+  width: 27.5rem;
+  height: 4rem;
+  border: 2px solid orange;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(211, 201, 201);
+}
+
+.winner_item__text {
+  font-size: 3rem;
+}
