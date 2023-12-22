@@ -9,6 +9,7 @@ import {
 import {generateCandidates} from './utils/generateCandidates';
 import {ICandidate} from '@/interfaces/ICandidate';
 import {getRandomWinners} from './utils/getRandomWinners';
+import {FIFTEEN_SECONDS, FIVE_SECONDS} from './constants';
 
 function App() {
   const [candidates, setCandidates] = useState<ICandidate[]>([]);
@@ -41,7 +42,7 @@ function App() {
     if (!isGameOn) {
       return;
     }
-    setCount(1);
+    setCount(15);
     setTimeout(() => {
       let currentWinnerCount: number;
 
@@ -59,7 +60,6 @@ function App() {
 
       let currentIndex = -1;
 
-      // Устанавливаем интервал для добавления победителей каждую секунду
       const intervalId = setInterval(() => {
         setIsVideoPlay(true);
         setCurrentWinners((prevWinners) => [
@@ -68,38 +68,67 @@ function App() {
         ]);
         currentIndex++;
 
-        // Проверяем, завершилось ли добавление всех победителей
         if (currentIndex === winners.length - 1) {
           clearInterval(intervalId);
           setTimeout(() => {
             setAllWinners((prevWinners) => [...prevWinners, ...winners]);
             setCurrentWinners([]);
             setIsVideoPlay(false);
-          }, 1000); //5000 ms
-          // Останавливаем интервал
+          }, FIVE_SECONDS);
         }
       }, 1000);
-    }, 1000); //15000 ms
+    }, FIFTEEN_SECONDS);
   }, [candidates, isGameOn]);
 
   const startGame = () => {
     setIsGameOn(true);
   };
 
+  const resetGame = () => {
+    setCandidates(generateCandidates());
+    setCurrentWinners([]);
+    setCount(null);
+    setAllWinners([]);
+    setIsGameOn(false);
+    setIsGameOver(false);
+    setIsVideoPlay(false);
+  };
+
   return (
     <main className="main_content">
       <section className="current_winners_section">
         <VideoPlayer isPlay={isVideoPlay} />
-        {!isGameOn && !isGameOver && (
-          <button onClick={startGame}>Начать розыгрыш</button>
-        )}
-        {isGameOver && <span>Игра окончена</span>}
-        <CurrentWinnersList currentWinners={currentWinners} />
+        <div className="current_winners_list">
+          {isGameOn && <CurrentWinnersList currentWinners={currentWinners} />}
+          {!isGameOn && !isGameOver && (
+            <button
+              className="current_winners_list__button"
+              onClick={startGame}
+            >
+              Начать розыгрыш
+            </button>
+          )}
+          {isGameOn && currentWinners.length === 0 && (
+            <Spinner count={count} setCount={setCount} />
+          )}
+          {isGameOver && (
+            <>
+              <span className="current_winners_list__text">
+                Розыгрыш окончен.
+              </span>
+              <button
+                className="current_winners_list__button"
+                onClick={resetGame}
+              >
+                Обнулить результат
+              </button>
+            </>
+          )}
+        </div>
       </section>
       <section className="winners_section">
         <WinnersList winners={allWinners} />
       </section>
-      <Spinner count={count} setCount={setCount} />
     </main>
   );
 }

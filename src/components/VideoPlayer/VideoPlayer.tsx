@@ -9,6 +9,7 @@ const VideoPlayer = ({isPlay}: VideoPlayerProps) => {
   useEffect(() => {
     if (videoRef.current) {
       if (isPlay) {
+        videoRef.current.currentTime = 0;
         videoRef.current.play();
       } else {
         videoRef.current.pause();
