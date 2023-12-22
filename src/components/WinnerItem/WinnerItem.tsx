@@ -1,11 +1,12 @@
-import './WinnerItem.styles.css';
+import './WinnerItem.styles.css'
+import {WinnerItemProps} from './WinnerItem.types'
 
-const WinnerItem = () => {
+const WinnerItem = ({text}: WinnerItemProps) => {
   return (
     <div className="winner_item">
-      <span className="winner_item__text">Призёр 1</span>
+      <span className="winner_item__text">{text}</span>
     </div>
-  );
-};
+  )
+}
 
-export { WinnerItem };
+export {WinnerItem}

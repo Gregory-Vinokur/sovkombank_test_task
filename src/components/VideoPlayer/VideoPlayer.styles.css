@@ -1,5 +1,5 @@
 .video {
   width: 65%;
   height: 50rem;
-  object-fit: fill;
+  object-fit: cover;
 }
