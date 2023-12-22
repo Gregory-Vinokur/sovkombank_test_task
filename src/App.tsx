@@ -9,7 +9,7 @@ import {
 import {generateCandidates} from './utils/generateCandidates';
 import {ICandidate} from '@/interfaces/ICandidate';
 import {getRandomWinners} from './utils/getRandomWinners';
-import {FIFTEEN_SECONDS, FIVE_SECONDS} from './constants';
+import {ERROR_MESSAGE, FIFTEEN_SECONDS, FIVE_SECONDS} from './constants';
 
 function App() {
   const [candidates, setCandidates] = useState<ICandidate[]>([]);
@@ -19,9 +19,16 @@ function App() {
   const [isGameOn, setIsGameOn] = useState<boolean>(false);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isVideoPlay, setIsVideoPlay] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setCandidates(generateCandidates());
+    try {
+      const loadedCandidates = generateCandidates();
+      setCandidates(loadedCandidates);
+      setError(null);
+    } catch (error) {
+      setError(ERROR_MESSAGE);
+    }
   }, []);
 
   useEffect(() => {
@@ -82,6 +89,7 @@ function App() {
 
   const startGame = () => {
     setIsGameOn(true);
+    setError(null);
   };
 
   const resetGame = () => {
@@ -100,7 +108,7 @@ function App() {
         <VideoPlayer isPlay={isVideoPlay} />
         <div className="current_winners_list">
           {isGameOn && <CurrentWinnersList currentWinners={currentWinners} />}
-          {!isGameOn && !isGameOver && (
+          {!isGameOn && !isGameOver && !error && (
             <button
               className="current_winners_list__button"
               onClick={startGame}
@@ -111,6 +119,7 @@ function App() {
           {isGameOn && currentWinners.length === 0 && (
             <Spinner count={count} setCount={setCount} />
           )}
+          {error && <span className="current_winners_list__text">{error}</span>}
           {isGameOver && (
             <>
               <span className="current_winners_list__text">
